@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '5173:80'
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - pfp-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      - PORT=3001
+      - FRONTEND_URL=http://localhost:5173
+      - REDIS_URL=redis://redis:6379
+      - TEMP_DIR=/app/temp
+      - FILE_TTL_SECONDS=3600
+      - MAX_FILE_SIZE_MB=10
+      - REMBG_SERVICE_URL=http://rembg:8001
+      - GFPGAN_SERVICE_URL=http://gfpgan:8002
+      - SD_SERVICE_URL=http://localhost:8003
+      - NODE_ENV=production
+    volumes:
+      - temp-data:/app/temp
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - pfp-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - pfp-network
+
+  rembg:
+    build:
+      context: ./ai-services/rembg
+      dockerfile: Dockerfile
+    ports:
+      - '8001:8001'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8001/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    networks:
+      - pfp-network
+
+  gfpgan:
+    build:
+      context: ./ai-services/gfpgan
+      dockerfile: Dockerfile
+    ports:
+      - '8002:8002'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8002/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    networks:
+      - pfp-network
+
+volumes:
+  redis-data:
+  temp-data:
+
+networks:
+  pfp-network:
+    driver: bridge
