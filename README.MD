@@ -106,21 +106,18 @@
 
 <div align="center">
 
-### 🏠 Home — Upload Interface
-<img src="images/homepage.png" alt="PFP Maker Homepage"/>
+### 🏠 Home Page
+<img src="images\homepage (3).png"/>
 
 <br/><br/>
 
+### 🖼️ Style Presets Grid <br/><br/>
+<img src="images\style preset.png"/>
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <strong>🖼️ Style Presets Grid</strong><br/><br/>
-      <img src="images/styles.png" alt="Style Presets"/>
-    </td>
-    <td width="50%" align="center">
-      <strong>📱 Mobile View</strong><br/><br/>
-      <img src="images/mobile.png" alt="Mobile View"/>
+<br/><br/>
+
+### 📱 Mobile View<br/><br/>
+<img src="images\mobileview (2).png"/>
     </td>
   </tr>
 </table>
