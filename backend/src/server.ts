@@ -23,9 +23,13 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: [
+    "http://localhost:5173",
+    "https://open-source-ai-profile-picture-make-one.vercel.app"
+  ],
   methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
   maxAge: 86400,
 }));
 
