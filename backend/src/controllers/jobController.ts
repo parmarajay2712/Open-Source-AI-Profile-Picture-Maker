@@ -48,7 +48,7 @@ export async function uploadImage(req: Request, res: Response, next: NextFunctio
 export async function getJobStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { jobId } = req.params;
-    const job = getJob(jobId);
+    const job = getJob(jobId as string);
 
     if (!job) {
       res.status(404).json({
@@ -75,16 +75,16 @@ export async function getJobStatus(req: Request, res: Response, next: NextFuncti
 export async function removeBackground(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { jobId } = req.params;
-    const job = getJob(jobId);
+    const job = getJob(jobId as string);
 
     if (!job) {
       res.status(404).json({ message: 'Job not found.', code: 'JOB_NOT_FOUND', statusCode: 404 });
       return;
     }
 
-    updateJobStatus(jobId, 'pending', { progress: 0 });
+    updateJobStatus(jobId as string, 'pending', { progress: 0 });
 
-    await addJob({ jobId, action: 'remove-bg' });
+    await addJob({ jobId: jobId as string, action: 'remove-bg' });
 
     res.json({ message: 'Background removal started.', jobId });
   } catch (error) {
@@ -97,7 +97,7 @@ export async function applyStyle(req: Request, res: Response, next: NextFunction
     const { jobId } = req.params;
     const { preset, prompt } = req.body as ApplyStyleRequest;
 
-    const job = getJob(jobId);
+    const job = getJob(jobId as string);
     if (!job) {
       res.status(404).json({ message: 'Job not found.', code: 'JOB_NOT_FOUND', statusCode: 404 });
       return;
@@ -114,9 +114,9 @@ export async function applyStyle(req: Request, res: Response, next: NextFunction
       return;
     }
 
-    updateJobStatus(jobId, 'pending', { progress: 0 });
+    updateJobStatus(jobId as string, 'pending', { progress: 0 });
 
-    await addJob({ jobId, action: 'apply-style', preset, prompt });
+    await addJob({ jobId: jobId as string, action: 'apply-style', preset, prompt });
 
     res.json({ message: 'Style application started.', jobId });
   } catch (error) {
@@ -127,16 +127,16 @@ export async function applyStyle(req: Request, res: Response, next: NextFunction
 export async function enhanceFace(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { jobId } = req.params;
-    const job = getJob(jobId);
+    const job = getJob(jobId as string);
 
     if (!job) {
       res.status(404).json({ message: 'Job not found.', code: 'JOB_NOT_FOUND', statusCode: 404 });
       return;
     }
 
-    updateJobStatus(jobId, 'pending', { progress: 0 });
+    updateJobStatus(jobId as string, 'pending', { progress: 0 });
 
-    await addJob({ jobId, action: 'enhance' });
+    await addJob({ jobId: jobId as string, action: 'enhance' });
 
     res.json({ message: 'Face enhancement started.', jobId });
   } catch (error) {
@@ -149,7 +149,7 @@ export async function replaceBackground(req: Request, res: Response, next: NextF
     const { jobId } = req.params;
     const { type, value } = req.body as ReplaceBackgroundRequest;
 
-    const job = getJob(jobId);
+    const job = getJob(jobId as string);
     if (!job) {
       res.status(404).json({ message: 'Job not found.', code: 'JOB_NOT_FOUND', statusCode: 404 });
       return;
@@ -174,9 +174,9 @@ export async function replaceBackground(req: Request, res: Response, next: NextF
       return;
     }
 
-    updateJobStatus(jobId, 'pending', { progress: 0 });
+    updateJobStatus(jobId as string, 'pending', { progress: 0 });
 
-    await addJob({ jobId, action: 'replace-bg', bgType: type, bgValue: value });
+    await addJob({ jobId: jobId as string, action: 'replace-bg', bgType: type, bgValue: value });
 
     res.json({ message: 'Background replacement started.', jobId });
   } catch (error) {
@@ -188,7 +188,7 @@ export async function getResult(req: Request, res: Response, next: NextFunction)
   try {
     const { jobId } = req.params;
     const type = req.query.type as string | undefined;
-    const job = getJob(jobId);
+    const job = getJob(jobId as string);
 
     if (!job) {
       res.status(404).json({ message: 'Job not found.', code: 'JOB_NOT_FOUND', statusCode: 404 });
@@ -222,7 +222,7 @@ export async function getResult(req: Request, res: Response, next: NextFunction)
 export async function deleteJobHandler(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { jobId } = req.params;
-    const deleted = deleteJob(jobId);
+    const deleted = deleteJob(jobId as string);
 
     if (!deleted) {
       res.status(404).json({ message: 'Job not found.', code: 'JOB_NOT_FOUND', statusCode: 404 });
